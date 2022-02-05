@@ -21,19 +21,24 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    @GetMapping("/discover")
-    public ResponseEntity<User> getByIdOrUsername(@RequestParam(required = false) Integer id, @RequestParam(required = false) String username) throws UserNotFoundException {
-        User user = userService.getByIdOrUsername(id, username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
     @GetMapping("/find/{id}")
     public ResponseEntity<User> getUserById (@PathVariable("id") Integer id) throws UserNotFoundException {
-        User user = userService.findUserByID(id);
+        User user = userService.getUserByID(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+    @GetMapping("/discover")
+    public ResponseEntity<User> getByIdOrUsername(@RequestParam(required = false) Integer id, @RequestParam(required = false) String username) throws UserNotFoundException {
+        User user = userService.getUserByIdOrUsername(id, username);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
     @PostMapping("/add/{username}/{password}")
     public ResponseEntity<String> addUser(@PathVariable("username") String username, @PathVariable("password") String password) {
         userService.createUser(username, password);
         return new ResponseEntity<>("User, " + username + ", has been added.", HttpStatus.CREATED);
+    }
+    @PutMapping("/user")
+    public ResponseEntity<String> updateUser(@RequestBody User user) {
+        userService.updateUser(user);
+        return new ResponseEntity<>("User, " + user.getUsername() + ", has been updated.", HttpStatus.OK);
     }
 }
