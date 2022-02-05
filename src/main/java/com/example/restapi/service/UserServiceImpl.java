@@ -36,4 +36,7 @@ public class UserServiceImpl implements  UserService{
     public void updateUser(User user) {
         userRepository.save(user);
     }
+    public void deleteUser(Integer userId) throws UserNotFoundException{
+        userRepository.delete(getUserByID(userId));
+    }
 }

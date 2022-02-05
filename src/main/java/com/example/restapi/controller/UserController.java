@@ -36,9 +36,14 @@ public class UserController {
         userService.createUser(username, password);
         return new ResponseEntity<>("User, " + username + ", has been added.", HttpStatus.CREATED);
     }
-    @PutMapping("/user")
+    @PutMapping("/user/update")
     public ResponseEntity<String> updateUser(@RequestBody User user) {
         userService.updateUser(user);
         return new ResponseEntity<>("User, " + user.getUsername() + ", has been updated.", HttpStatus.OK);
+    }
+    @DeleteMapping("user/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) throws UserNotFoundException {
+        userService.deleteUser(id);
+        return new ResponseEntity<>("User with id:  " + id + ", has been deleted.", HttpStatus.OK);
     }
 }

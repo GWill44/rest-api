@@ -12,4 +12,5 @@ public interface UserService {
     User getUserByIdOrUsername(Integer userId, String username) throws UserNotFoundException;
     void createUser(String username, String password);
     void updateUser(User user);
+    void deleteUser(Integer userId) throws UserNotFoundException;
 }
