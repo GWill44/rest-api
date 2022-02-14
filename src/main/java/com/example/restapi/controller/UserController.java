@@ -1,49 +1,55 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.model.User;
+import com.example.restapi.model.request.UserLoginRequest;
+import com.example.restapi.model.request.UserRegistrationRequest;
+import com.example.restapi.service.JWTService;
 import com.example.restapi.service.UserService;
-import com.example.restapi.utility.error.UserNotFoundException;
+import com.example.restapi.utility.error.IncorrectCredentialsException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/api/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JWTService jwtService;
+
     @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers () {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    @GetMapping("/find/{id}")
-    public ResponseEntity<User> getUserById (@PathVariable("id") Integer id) throws UserNotFoundException {
-        User user = userService.getUserByID(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(@RequestBody UserRegistrationRequest userRegistrationRequest) {
+        userService.createUser(userRegistrationRequest);
+        return ResponseEntity.ok().build();
     }
-    @GetMapping("/discover")
-    public ResponseEntity<User> getByIdOrUsername(@RequestParam(required = false) Integer id, @RequestParam(required = false) String username) throws UserNotFoundException {
-        User user = userService.getUserByIdOrUsername(id, username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-    @PostMapping("/add/{username}/{password}")
-    public ResponseEntity<String> addUser(@PathVariable("username") String username, @PathVariable("password") String password) {
-        userService.createUser(username, password);
-        return new ResponseEntity<>("User, " + username + ", has been added.", HttpStatus.CREATED);
-    }
-    @PutMapping("/user/update")
-    public ResponseEntity<String> updateUser(@RequestBody User user) {
-        userService.updateUser(user);
-        return new ResponseEntity<>("User, " + user.getUsername() + ", has been updated.", HttpStatus.OK);
-    }
-    @DeleteMapping("user/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) throws UserNotFoundException {
-        userService.deleteUser(id);
-        return new ResponseEntity<>("User with id:  " + id + ", has been deleted.", HttpStatus.OK);
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) throws IncorrectCredentialsException {
+        boolean correctCredentials = userService.checkCredentials(userLoginRequest);
+        if(correctCredentials){
+            User user = userService.getUserByUsername(userLoginRequest.getUsername());
+            String token = jwtService.generateToken(user);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Token", token);
+            return new ResponseEntity<>(headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }
