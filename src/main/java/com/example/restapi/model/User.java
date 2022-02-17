@@ -17,6 +17,8 @@ public class User {
     private String email;
     @Column
     private String password;
+    @Column
+    private Integer admin;
 
     public User(String username, String password){
         this.username = username;
@@ -48,5 +50,11 @@ public class User {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+    public Integer getAdmin() {
+        return admin;
+    }
+    public void setAdmin(Integer admin) {
+        this.admin = admin;
     }
 }

@@ -42,10 +42,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) throws IncorrectCredentialsException {
         boolean correctCredentials = userService.checkCredentials(userLoginRequest);
+        HttpHeaders headers = new HttpHeaders();
         if(correctCredentials){
             User user = userService.getUserByUsername(userLoginRequest.getUsername());
             String token = jwtService.generateToken(user);
-            HttpHeaders headers = new HttpHeaders();
             headers.add("Token", token);
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
