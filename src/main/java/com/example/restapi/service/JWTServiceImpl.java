@@ -28,7 +28,7 @@ public class JWTServiceImpl implements JWTService {
         String compactTokenString = Jwts.builder()
                 .claim("id", user.getId())
                 .claim("sub", user.getUsername())
-                .claim("admin", true)
+                .claim("admin", user.getAdmin())
                 .setExpiration(expirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
