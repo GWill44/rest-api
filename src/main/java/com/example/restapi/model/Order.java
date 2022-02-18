@@ -2,7 +2,7 @@ package com.example.restapi.model;
 
 import javax.persistence.*;
 
-@Entity(name="order")
+@Entity(name="user_order")
 public class Order {
 
     @Id
