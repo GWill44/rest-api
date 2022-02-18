@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements  UserService{
+public class UserServiceImpl implements  UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -46,17 +46,6 @@ public class UserServiceImpl implements  UserService{
         return userRepository.findByUsername(username).orElseThrow(() -> new IncorrectCredentialsException());
     }
 
-
-
-
-
-
-
-
-
-
-
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -65,20 +54,4 @@ public class UserServiceImpl implements  UserService{
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId.toString()));
     }
 
-    public User getUserByIdOrUsername(Integer userId, String username) throws UserNotFoundException{
-        if (userId == null){
-            return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-        }
-        else {
-            return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId.toString()));
-        }
-    }
-
-    public void updateUser(User user) {
-        userRepository.save(user);
-    }
-
-    public void deleteUser(Integer userId) throws UserNotFoundException{
-        userRepository.delete(getUserByID(userId));
-    }
 }

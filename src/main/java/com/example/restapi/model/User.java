@@ -1,31 +1,23 @@
 package com.example.restapi.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-@Entity
+@Entity(name="user")
 public class User {
-    @Id
-    @GeneratedValue
-    private Integer id;
-    @Column
-    private String username;
-    @Column
-    private String email;
-    @Column
-    private String password;
-    @Column
-    private Integer admin;
 
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
-    }
-    public User() {
-    }
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
+
+    private String username;
+
+    private String email;
+
+    private String password;
+
+    private Integer admin = 0;
+
+    public User() {}
 
     public Integer getId() {
         return id;
@@ -57,4 +49,8 @@ public class User {
     public void setAdmin(Integer admin) {
         this.admin = admin;
     }
+    public boolean isAdmin(Integer admin) {
+        return admin == 1;
+    }
+
 }
